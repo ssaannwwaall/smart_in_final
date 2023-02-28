@@ -6,7 +6,8 @@ import 'package:smarty/features/home/presentation/views/home.dart';
 import '../Widgets/CustomButton.dart';
 import '../Widgets/CustomTextField.dart';
 import '../shared/res/colors.dart';
-import '../shared/res/typography.dart';
+
+
 class AppSettings extends StatefulWidget {
   const AppSettings({Key? key}) : super(key: key);
 
@@ -86,6 +87,9 @@ class _AppSettingsState extends State<AppSettings> {
     _controlleruUserName.text=serverUserName;
     _controllerPassword.text=serverPassword;
     _controllerToken.text=serverToken;
+
   }
+
+
 
 }

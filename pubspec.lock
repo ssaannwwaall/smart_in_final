@@ -581,6 +581,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  upnp2:
+    dependency: "direct main"
+    description:
+      name: upnp2
+      sha256: "9076a6eaa65972a2c68563ade64c7a0c11bd45b55aa1090e9d5ae19dc939949b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.0.10"
   url_launcher:
     dependency: "direct main"
     description:

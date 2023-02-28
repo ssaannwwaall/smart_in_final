@@ -6,7 +6,10 @@ import 'package:mqtt_client/mqtt_server_client.dart';
 import 'Helper/LocalDatabase.dart';
 import 'Provider/DeviceProvider.dart';
 import 'core/navigation/navigator.dart';
+import 'features/app_home.dart';
 import 'features/devices/domain/models/devices.dart';
+import 'features/home/presentation/views/home.dart';
+import 'features/routine/presentation/views/routine_home.dart';
 import 'shared/res/res.dart';
 import 'shared/widgets/onboarding_widget.dart';
 import 'shared/widgets/page_indicator.dart';
@@ -39,7 +42,8 @@ class MyApp extends StatelessWidget {
             title: 'Smart In',
             theme: SmartyThemeData.lightTheme,
             darkTheme: SmartyThemeData.darkTheme,
-            home: const MyHomePage(),
+           // home: const MyHomePage(),
+            home: const Dashboard(),
             onGenerateRoute: AppRouter.generateRoutes,
             navigatorKey: AppNavigator.key,
           ),
@@ -149,10 +153,5 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void loadDevices() async {
-    List<Device> strList = await LocalDatabase.getStringList(LocalDatabase.MY_DEVICES_LIST);
-    print("my devices...${strList.length}");
-    Provider.of<DeviceProvider>(context, listen: false).addAll(strList);
-    setState(() {});
-  }
+
 }

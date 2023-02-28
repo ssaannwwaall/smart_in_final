@@ -200,151 +200,153 @@ class _HomeScreenState extends State<HomeScreen> {
     MediaQueryData mediaQuery=MediaQuery.of(context);
     double _width=mediaQuery.size.width;
     double _height=mediaQuery.size.height;
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: 24.w),
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-          SizedBox(height: 32.h + MediaQuery.of(context).padding.top),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'Good Morning, Sanwal',
-                  style: TextStyles.headline4,
-                ),
-              ),
-              GestureDetector(
-                onTap: () {
-                  AppNavigator.pushNamed(appSettings);
-                },
-                child:   CircleAvatar(
-                  radius: 24,
-                  backgroundColor: SmartyColors.tertiary80,
-                  child:  Icon(Icons.settings,color: SmartyColors.grey60,),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 32.h),
-              Container(
-                width: _width*0.9,
-                height: _height*0.12,
-                padding: EdgeInsets.all(_width*0.01),
-                child: PageView(
-                  controller: _pageController,
-                  onPageChanged: (newPage) {
-                    setState(() {
-                      _page = newPage;
-                    });
-                  },
-                  children:  [
-                    Container(
-                      width: _width*0.8,
-                      height: _height*0.1,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(20)),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 32.h + MediaQuery.of(context).padding.top),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Good Morning, Sanwal',
+                        style: TextStyles.headline4,
                       ),
-                      child: Image.asset( "assets/images/movie.png",fit: BoxFit.cover,),
                     ),
-                    Container(
-                      width: _width*0.8,
-                      height: _height*0.1,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                    GestureDetector(
+                      onTap: () {
+                        AppNavigator.pushNamed(appSettings);
+                      },
+                      child:   CircleAvatar(
+                        radius: 24,
+                        backgroundColor: SmartyColors.tertiary80,
+                        child:  Icon(Icons.settings,color: SmartyColors.grey60,),
                       ),
-                      child: Image.asset( "assets/images/bg.png",fit: BoxFit.cover,),
-                    ),
-                    Container(
-                      width: _width*0.8,
-                      height: _height*0.1,
-                      decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                      ),
-                      child: Image.asset( "assets/images/home2.png",fit: BoxFit.cover,),
                     ),
                   ],
                 ),
-              ),
-          const SummaryHeader(),
-          /* SizedBox(height: 32.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Quick Action',
-                style: TextStyles.body.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: SmartyColors.grey,
+                SizedBox(height: 32.h),
+                Container(
+                  width: _width*0.9,
+                  height: _height*0.12,
+                  padding: EdgeInsets.all(_width*0.01),
+                  child: PageView(
+                    controller: _pageController,
+                    onPageChanged: (newPage) {
+                      setState(() {
+                        _page = newPage;
+                      });
+                    },
+                    children:  [
+                      Container(
+                        width: _width*0.8,
+                        height: _height*0.1,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(20)),
+                        ),
+                        child: Image.asset( "assets/images/movie.png",fit: BoxFit.cover,),
+                      ),
+                      Container(
+                        width: _width*0.8,
+                        height: _height*0.1,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: Image.asset( "assets/images/bg.png",fit: BoxFit.cover,),
+                      ),
+                      Container(
+                        width: _width*0.8,
+                        height: _height*0.1,
+                        decoration: const BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                        ),
+                        child: Image.asset( "assets/images/home2.png",fit: BoxFit.cover,),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              Text(
-                'Edit',
-                style: TextStyles.body.copyWith(
-                  color: SmartyColors.grey60,
+                const SummaryHeader(),
+                /* SizedBox(height: 32.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Quick Action',
+                  style: TextStyles.body.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: SmartyColors.grey,
+                  ),
                 ),
-              )
-            ],
-          ),
-          SizedBox(height: 16.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              ...['Wake up', 'Sleep', 'Clean']
-                  .map((e) => QuickAction(action: e))
-            ],
-          ),
-          */
-          SizedBox(height: 32.h),
-          Text(
-            'Active Devices',
-            style: TextStyles.body.copyWith(
-              fontWeight: FontWeight.w500,
-              color: SmartyColors.grey,
+                Text(
+                  'Edit',
+                  style: TextStyles.body.copyWith(
+                    color: SmartyColors.grey60,
+                  ),
+                )
+              ],
             ),
-          ),
-          SizedBox(height: 16.h),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [...devices.map((e) => DeviceCard(device: e,isFromHome: true,))],
+            SizedBox(height: 16.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                ...['Wake up', 'Sleep', 'Clean']
+                    .map((e) => QuickAction(action: e))
+              ],
             ),
-          ),
-          SizedBox(height: 32.h),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Locations',
-                style: TextStyles.body.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: SmartyColors.grey,
+            */
+                SizedBox(height: 32.h),
+                Text(
+                  'Active Devices',
+                  style: TextStyles.body.copyWith(
+                    fontWeight: FontWeight.w500,
+                    color: SmartyColors.grey,
+                  ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 16.h),
-          MediaQuery.removePadding(
-            context: context,
-            removeTop: true,
-            child: GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 16,
-                  mainAxisSpacing: 16,
-                  mainAxisExtent: 100,
+                SizedBox(height: 16.h),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [...devices.map((e) => DeviceCard(device: e,isFromHome: true,))],
+                  ),
                 ),
-                itemCount: Provider.of<DeviceProvider>(context, listen: false).getDevices().length,
-                itemBuilder: (BuildContext context, int index) {
-                  return RoomCard(location: Provider.of<DeviceProvider>(context, listen: false).getDevices()[index].room);
-                }),
-          ),
-        ]),
+                SizedBox(height: 32.h),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Locations',
+                      style: TextStyles.body.copyWith(
+                        fontWeight: FontWeight.w500,
+                        color: SmartyColors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 16.h),
+                MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: GridView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16,
+                        mainAxisSpacing: 16,
+                        mainAxisExtent: 100,
+                      ),
+                      itemCount: Provider.of<DeviceProvider>(context, listen: false).getDevices().length,
+                      itemBuilder: (BuildContext context, int index) {
+                        return RoomCard(location: Provider.of<DeviceProvider>(context, listen: false).getDevices()[index].room);
+                      }),
+                ),
+              ]),
+        ),
       ),
     );
   }
