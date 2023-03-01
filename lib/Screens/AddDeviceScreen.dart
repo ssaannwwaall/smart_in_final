@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:smarty/Helper/LocalDatabase.dart';
@@ -6,12 +7,12 @@ import 'package:smarty/Widgets/CustomButton.dart';
 import 'package:smarty/Widgets/CustomTextField.dart';
 import 'package:smarty/shared/res/res.dart';
 import 'package:smarty/utils/enums.dart';
+import '../Helper/Constants.dart';
 import '../Helper/Helper.dart';
 import '../Provider/DeviceProvider.dart';
 import '../core/navigation/navigator.dart';
 import 'package:provider/provider.dart';
 import '../features/devices/domain/models/devices.dart';
-
 import '../shared/res/typography.dart';
 import 'package:upnp2/dial.dart';
 import 'package:upnp2/media.dart';
@@ -43,8 +44,6 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
 
 
   List<Device> listOnLocalNetwork=[];
-  String selectedDevice="";
-  List<String> listDevicesOnLocalId=[];
 
   @override
   void initState() {
@@ -74,15 +73,6 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                 _controllerDeviceId.text=result;
                 }, icon: Icon(Icons.qr_code_scanner_sharp,color: SmartyColors.grey80,size: _height*0.04,)),
             ],),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                IconButton(onPressed: (){
-                  //loadSSDP();
-                }, icon: Icon(Icons.search,size: 25.w,)),
-              ],
-            ),
-
 
             /*Container(
               width: 100,
@@ -110,8 +100,6 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                 }).toList(),
               ),
             ),*/
-
-
 
             CustomTextField(_width*0.95, "Enter here", "Device ID", TextInputType.text, _controllerDeviceId),
             CustomTextField(_width*0.95, "Enter here", "Name", TextInputType.text, _controllerName),
@@ -158,7 +146,9 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                 CustomTextField(_width*0.95, "Enter here", "Model", TextInputType.text, _controllerModel),
                 CustomTextField(_width*0.95, "Enter here", "Brand", TextInputType.text, _controllerBrand),
               ],
-            ):Container(),
+            ): CustomButton("Search on local network", _width*0.9, () {
+              loadSSDP();
+            },background: Colors.white),
             SizedBox(height: _height*0.01,),
             SizedBox(width: _width*0.95,child: Text("You wanna add daily schedule?",style: TextStyles.body,)),
             Row(
@@ -296,53 +286,141 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
 
 
   void loadData() {
-    print("kkkk");
     if(widget.device!=null) {
-      _controllerDeviceId.text=widget.device!.deviceId??"";
+      _controllerDeviceId.text=widget.device!.deviceId;
       _controllerName.text=widget.device!.name??"";
-      _controllerLocation.text=widget.device!.room??"";
-      _controllerIP.text=widget.device!.deviceIP??"";
-      _controllerModel.text=widget.device!.model??"";
-      _controllerBrand.text=widget.device!.deviceBrand??"";
+      _controllerLocation.text=widget.device!.room;
+      _controllerIP.text=widget.device!.deviceIP;
+      _controllerModel.text=widget.device!.model;
+      _controllerBrand.text=widget.device!.deviceBrand;
       setState(() {});
     }
-
-    loadSSDP();
   }
   loadSSDP()async {
+    Helper.showLoading(context);
     final disc = ssdp.DeviceDiscoverer();
     await disc.start(ipv6: false);
     disc.quickDiscoverClients().listen((client) async {
       try {
         final dev = await client.getDevice();
-        print('Found device: ${dev!.friendlyName}: ${dev.url}');
-        print('Found device: ${dev!.deviceType}: ${dev.url}');
-        print('Found device: ${dev!.manufacturer}: ${dev.url}');
-        print('Found device: ${dev!.modelName}: ${dev.url}');
-        print('Found device: ${dev!.urlBase}: ${dev.url}');
-        print('Found device: ${dev!.modelName}: ${dev.url}');
-        print('Found device: ${dev!.icons}: ${dev.url}');
-        print('Found device: ${dev!.modelDescription}: ${dev.url}');
-        /*listOnLocalNetwork.add(Device(active: false, room: "", mute: "0",
+        if (kDebugMode) {
+          print('Found device: ${dev!.friendlyName}: ${dev.url}');
+          print('Found device deviceType: ${dev.deviceType}: ${dev.url}');
+          print('Found device manufacturer: ${dev.manufacturer}: ${dev.url}');
+          print('Found device modelName: ${dev.modelName}: ${dev.url}');
+          print('Found device urlBase: ${dev.urlBase}: ${dev.url}');
+          print('Found device modelName: ${dev.modelName}: ${dev.url}');
+          print('Found device icons: ${dev.icons}: ${dev.url}');
+          print('Found device modelDescription: ${dev.modelDescription}: ${dev.url}');
+        }
+
+        bool alreadySaved=false;
+        if(dev!.manufacturer==Constants.BRAND_NAME) { //brand
+          Provider.of<DeviceProvider>(context, listen: false).getDevices().forEach((element) {
+            if(element.deviceBrand==dev.modelName) {
+              alreadySaved=true;
+            }
+          });
+          if(!alreadySaved) {
+            //String url="http://192.168.0.102:80/description.xml";
+            String s1=dev.urlBase.toString().split("//")[1];
+            String ip=s1.split("/des").first;
+            print("IP is $ip");
+            listOnLocalNetwork.add(Device(active: false, room: "", mute: "0",
             alarm: "0", power: "0", deviceBrand: dev.manufacturer!,
-            deviceId: dev.serviceNames.toString(), deviceIP: dev.url.toString(),
-            deviceModel: dev.modelName.toString(), model: "", index: 0));*/
-
-        //if(brand=="CeeTech") {
-          //listDevicesOnLocalId.add(dev.modelName!);
-        //}
-
-        _controllerDeviceId.text=dev.udn??"";
-        _controllerName.text=dev.friendlyName??"";
-        _controllerLocation.text="";
-        _controllerIP.text="";
-        _controllerModel.text=dev.modelName??"";
-        _controllerBrand.text=dev.manufacturer??"";
+            deviceId: dev.serviceNames.toString(), deviceIP: ip,
+            deviceModel: dev.modelName.toString(), model: "", index: 0));
+          }
+        }
         setState(() {});
       } catch (e, stack) {
         print('ERROR: $e - ${client.location}');
         print(stack);
       }
+    }
+    ).onDone(() {
+
+      Navigator.of(context).pop();
+      if(listOnLocalNetwork.isEmpty){
+        Helper.toast("Device not found", SmartyColors.error);
+      }else{
+        totalDevices(context,"${listOnLocalNetwork.length} device(s) found, do you want to save device?",(){
+          //save..
+          // saveDevice(Device(
+          //     name: listOnLocalNetwork.first.name,
+          //     type: DeviceType.fence,
+          //     active: false, room: _controllerLocation.text.toString(),
+          //     mute: "0", alarm: "0", power: "0", deviceBrand: _controllerBrand.text.toString(),
+          //     deviceId: _controllerDeviceId.text.toString(), deviceIP: _controllerIP.text.toString(),
+          //     deviceModel: _controllerModel.text.toString(), model: _controllerModel.text.toString(),
+          //     index: Provider.of<DeviceProvider>(context, listen: false).getDevices().length
+          // ));
+          _controllerDeviceId.text=listOnLocalNetwork.first.deviceId;
+          _controllerName.text=listOnLocalNetwork.first.name??"";
+          _controllerLocation.text="";
+          _controllerIP.text=listOnLocalNetwork.first.deviceIP;
+          _controllerModel.text=listOnLocalNetwork.first.model;
+          _controllerBrand.text=listOnLocalNetwork.first.deviceBrand;
+          setState((){});
+        });
+      }
     });
   }
+  static void totalDevices(BuildContext context, String msg, Function()? functionHandler) {
+    Dialog rejectDialogWithReason = Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              SizedBox(height: 15.r,),
+              Text(
+                msg,
+                style: const TextStyle(
+                    fontWeight: FontWeight.w100,
+                    fontSize: 16,
+                    color: Colors.black),
+              ),
+              SizedBox(height: 10.r,),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                      onPressed: functionHandler,
+                      child: const Text(
+                        'Save one',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w100,
+                            fontSize: 16,
+                            color: Colors.black),
+                      )),
+                  TextButton(
+                      onPressed: (){Navigator.of(context).pop();},
+                      child: const Text(
+                        'Cancel',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w100,
+                            fontSize: 16,
+                            color: Colors.black),
+                      )),
+                ],
+              )
+            ],
+          ),
+        ));
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => rejectDialogWithReason);
+  }
+
+  saveDevice(Device device1) {
+    Provider.of<DeviceProvider>(context, listen: false).add(device1);
+    LocalDatabase.saveStringList(LocalDatabase.MY_DEVICES_LIST,
+        Provider.of<DeviceProvider>(context,listen: false).getDevices().map((deviceObj) => jsonEncode( deviceObj.toJson() )).toList() );
+    Helper.toast("${device1.name} saved successfully", SmartyColors.success);
+    Navigator.of(context).pop();
+  }
+
 }

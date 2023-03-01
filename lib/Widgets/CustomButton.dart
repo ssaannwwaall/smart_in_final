@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:smarty/shared/res/colors.dart';
 
 class CustomButton extends StatelessWidget {
   final String lable;
@@ -16,11 +17,11 @@ class CustomButton extends StatelessWidget {
       width: width,
       child: ElevatedButton(
           style: ButtonStyle(
-              backgroundColor: background != null ? MaterialStateProperty.all(background) : MaterialStateProperty.all(Theme.of(context).primaryColor),
+              backgroundColor: background != null ? MaterialStateProperty.all(background) : MaterialStateProperty.all(SmartyColors.primary),
               shape: MaterialStateProperty.all<RoundedRectangleBorder>(
                   RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
-                      side:  BorderSide(color: Theme.of(context).primaryColor),
+                      side:  BorderSide(color: SmartyColors.primary),
                   )
               )
           ),
@@ -33,9 +34,9 @@ class CustomButton extends StatelessWidget {
             style: TextStyle(
                 fontWeight: FontWeight.w800,
                 fontSize: 20,
-                color: background != null ? Theme.of(context).primaryColor :  Colors.white),
+                color: background != null ? SmartyColors.primary :  Colors.white),
               // background != null
-              // ? Theme.of(context).primaryColor
+              // ? SmartyColors.primary
               // :
           ),
         ),

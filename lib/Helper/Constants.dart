@@ -8,6 +8,7 @@ class Constants {
   static String SUPPORT_PHONE_NUMBER = '+923219448144';
   static String SUPPORT_OFFICE_EMAIL = "info@example.com";
   static const String APP_NAME = "Smart-In";
+  static const String BRAND_NAME = "CeeTech";
 
 
   /// ---------------------------change above info for cloning-------------------------------------

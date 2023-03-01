@@ -5,6 +5,7 @@ import 'package:smarty/features/devices/domain/models/devices.dart';
 import 'package:smarty/features/home/presentation/views/home.dart';
 import '../Widgets/CustomButton.dart';
 import '../Widgets/CustomTextField.dart';
+import '../features/app_home.dart';
 import '../shared/res/colors.dart';
 
 

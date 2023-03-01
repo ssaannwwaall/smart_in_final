@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mqtt_client/mqtt_server_client.dart';
 import 'Helper/LocalDatabase.dart';
 import 'Provider/DeviceProvider.dart';
+import 'Provider/IsServerConnectedProvider.dart';
 import 'core/navigation/navigator.dart';
 import 'features/app_home.dart';
 import 'features/devices/domain/models/devices.dart';
@@ -15,6 +16,7 @@ import 'shared/widgets/onboarding_widget.dart';
 import 'shared/widgets/page_indicator.dart';
 import 'shared/widgets/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:oktoast/oktoast.dart';
 
 void main() {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +29,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    loadServerData();
     FlutterNativeSplash.remove();
     return ScreenUtilInit(
       designSize: const Size(428, 926),
@@ -36,20 +39,30 @@ class MyApp extends StatelessWidget {
         return MultiProvider(
           providers: [
             ChangeNotifierProvider<DeviceProvider>(create: (context) => DeviceProvider()),
+            ChangeNotifierProvider<IsServerConnectedProvider>(create: (context) => IsServerConnectedProvider()),
           ],
-          child: MaterialApp(
-            debugShowCheckedModeBanner: false,
-            title: 'Smart In',
-            theme: SmartyThemeData.lightTheme,
-            darkTheme: SmartyThemeData.darkTheme,
-           // home: const MyHomePage(),
-            home: const Dashboard(),
-            onGenerateRoute: AppRouter.generateRoutes,
-            navigatorKey: AppNavigator.key,
+          child: OKToast(
+            child: MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: 'Smart In',
+              theme: SmartyThemeData.lightTheme,
+              darkTheme: SmartyThemeData.darkTheme,
+             // home: const MyHomePage(),
+              home: const Dashboard(),
+              onGenerateRoute: AppRouter.generateRoutes,
+              navigatorKey: AppNavigator.key,
+            ),
           ),
         );
       },
     );
+  }
+  Future<void> loadServerData() async {
+    serverDomain=await LocalDatabase.getString(LocalDatabase.SERVER_DOMAIN);
+    serverPort=await LocalDatabase.getString(LocalDatabase.SERVER_PORT);
+    serverUserName=await LocalDatabase.getString(LocalDatabase.SERVER_USER_NAME);
+    serverPassword=await LocalDatabase.getString(LocalDatabase.SERVER_PASSWORD);
+    serverToken=await LocalDatabase.getString(LocalDatabase.SERVER_TOKEN);
   }
 }
 

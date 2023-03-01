@@ -8,7 +8,7 @@ class Device {
   String deviceIP;
   String deviceModel;
   String deviceBrand;
-  bool active;
+  bool active;//previous
   String room;
   String mute;
   String power;
