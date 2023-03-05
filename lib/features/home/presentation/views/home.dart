@@ -208,12 +208,25 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyles.headline4,
                       ),
                     ),
-                    ClipOval(
-                      child: Container(
-                        width: 15.r,
-                        height: 15.r,
-                          color: Provider.of<IsServerConnectedProvider>(context).getServerStatus()? SmartyColors.success:
-                              SmartyColors.error,
+                    Container(
+                      margin: const EdgeInsets.all(10),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.green,
+                            blurRadius: 20.0,
+                            spreadRadius: 10.0,
+                          )
+                        ],
+                      ),
+                      child: ClipOval(
+                        child: Container(
+                          width: 15.r,
+                          height: 15.r,
+                            color: Provider.of<IsServerConnectedProvider>(context).getServerStatus()? SmartyColors.success:
+                                SmartyColors.error,
+                        ),
                       ),
                     ),
                     GestureDetector(

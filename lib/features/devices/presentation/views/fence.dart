@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../Helper/Helper.dart';
+import '../../../../Provider/DeviceProvider.dart';
 import '../../../../core/navigation/navigator.dart';
 import '../../../../shared/res/res.dart';
 import '../../../../utils/enums.dart';
 import '../../domain/models/devices.dart';
-
+import 'package:provider/provider.dart';
 class Fence extends StatefulWidget {
   final Device device;
   Fence({Key? key, required this.device})
@@ -313,9 +314,11 @@ class _FenceState extends State<Fence> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  setState(() {
-                                    widget.device.power="1";
-                                  });
+                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/Power/1",context);
+                                  // setState(() {
+                                  //   //publish here
+                                  //   widget.device.power="1";
+                                  // });
                                 },
                                 child: Image.asset('assets/icons/power.png',
                                   color: SmartyColors.primary,width: 40.r,height: 40.r,),
@@ -323,9 +326,10 @@ class _FenceState extends State<Fence> {
                               SizedBox(width: 30.h,),
                               InkWell(
                                 onTap: (){
-                                  setState(() {
-                                    widget.device.power="0";
-                                  });
+                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/Power/0",context);
+                                  // setState(() {
+                                  //   widget.device.power="0";
+                                  // });
                                 },
                                 child: Image.asset('assets/icons/power.png',
                                   color: SmartyColors.grey80,width: 40.r,height: 40.r,),
@@ -346,9 +350,9 @@ class _FenceState extends State<Fence> {
                               //const Icon(Icons.volume_up_rounded),
                               SizedBox(width: 5.w),
                               Text(
-                                widget.device.power=="0"?'Disarmed':
-                                widget.device.power=="1"?"Armed":
-                                widget.device.power=="2"?"Not responding":"Un-known",
+                                Provider.of<DeviceProvider>(context, listen: false).getDevices()[widget.device.index].power=="0"?'Disarmed':
+                                Provider.of<DeviceProvider>(context, listen: false).getDevices()[widget.device.index].power=="1"?"Armed":
+                                Provider.of<DeviceProvider>(context, listen: false).getDevices()[widget.device.index].power=="2"?"Not responding":"Un-known",
                                 style: TextStyles.headline4
                                     .copyWith(color: SmartyColors.grey),
                               ),
@@ -381,9 +385,12 @@ class _FenceState extends State<Fence> {
                             children: [
                               InkWell(
                                 onTap: () {
-                                  setState(() {
-                                    widget.device.mute="0";
-                                  });
+                                  //publish here
+                                  print('clicked...');
+                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/mute/0",context);
+                                  // setState(() {
+                                  //   widget.device.mute="0";
+                                  // });
                                 },
                                 child: Image.asset('assets/icons/unmute.png',
                                   color: SmartyColors.primary,width: 40.r,height: 40.r,),
@@ -391,9 +398,10 @@ class _FenceState extends State<Fence> {
                               SizedBox(width: 30.h,),
                               InkWell(
                                 onTap: (){
-                                  setState(() {
-                                    widget.device.mute="1";
-                                  });
+                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/mute/1",context);
+                                  // setState(() {
+                                  //   widget.device.mute="1";
+                                  // });
                                 },
                                 child: Image.asset('assets/icons/mute.png',
                                   color: SmartyColors.grey80,width: 40.r,height: 40.r,),
@@ -414,7 +422,7 @@ class _FenceState extends State<Fence> {
                               //const Icon(Icons.volume_up_rounded),
                               SizedBox(width: 5.w),
                               Text(
-                                widget.device.mute=="0"?'Mute':"Un-mute",
+                                Provider.of<DeviceProvider>(context, listen: false).getDevices()[widget.device.index].mute=="0"?'Mute':"Un-mute",
                                 style: TextStyles.headline4
                                     .copyWith(color: SmartyColors.grey),
                               ),
@@ -470,6 +478,8 @@ class _FenceState extends State<Fence> {
               Center(
                 child: InkWell(
                   onTap: (){
+                    Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/Sound/1",context);
+                    //publish here
                   },
                   child: Container(
                     padding: EdgeInsets.all(20.r),

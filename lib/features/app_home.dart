@@ -150,15 +150,12 @@ class _DashboardState extends State<Dashboard>
     }
 
 
-    // const topic2 = 'SJHTopic2'; // Not a wildcard topic
-    // client.subscribe(topic2, MqttQos.atMostOnce);
-
     client.updates!.listen((messageList) {
       print(" listening.... ${messageList.length}");
       if(messageList.length>0){
         print("my message is ${messageList[0].payload}");
       }
-      //Provider.of<DeviceProvider>(context, listen: false).getDevices()
+
       final recMess = messageList[0];
       // if (recMess is! MqttReceivedMessage<MqttPublishMessage>) return;
       // final pubMess = recMess.payload;
@@ -189,6 +186,7 @@ class _DashboardState extends State<Dashboard>
     client.published!.listen((MqttPublishMessage message) {
       print('EXAMPLE::Published notification:: topic is ${message.variableHeader!.topicName}, with Qos ${message.header!.qos}');
     });
+
 
     final builder1 = MqttClientPayloadBuilder();
     builder1.addString('Hello from mqtt_client topic 1');

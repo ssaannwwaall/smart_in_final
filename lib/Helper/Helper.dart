@@ -5,7 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mqtt_client/mqtt_client.dart';
+import 'package:smarty/features/app_home.dart';
 import 'package:smarty/shared/res/colors.dart';
+import 'package:typed_data/src/typed_buffer.dart';
 import 'Constants.dart';
 import 'LocalDatabase.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -296,4 +299,20 @@ class Helper {
     return selectedTime;
   }
 
+  static Future<void> publishTopic(String topic,BuildContext context) async {
+    if(await isInternetAvailble()){
+      if (client.connectionStatus!.state == MqttConnectionState.connected) {
+         MqttClientPayloadBuilder().addString(topic);
+         client.publishMessage(topic, MqttQos.exactlyOnce, MqttClientPayloadBuilder().addString(topic).payload!);
+
+      } else {
+        Helper.msgDialog(context, "Please wait server is trying to connect your device, and try again later.", () {
+          Navigator.of(context).pop();
+        });
+      }
+    }else{
+      Helper.toast(Constants.noInternetConnection, SmartyColors.grey60);
+    }
+
+  }
 }
