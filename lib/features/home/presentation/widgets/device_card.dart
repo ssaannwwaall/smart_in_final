@@ -28,14 +28,20 @@ class _DeviceCardState extends State<DeviceCard> {
       onTap: () {
         //print("route is ${widget.device.type.routeName}   device name ${widget.device.name}");
         AppNavigator.pushNamed(widget.device.type!.routeName, arguments: widget.device);
+        // tag change here
+        // if(widget.device.status=="1"){
+        //   AppNavigator.pushNamed(widget.device.type!.routeName, arguments: widget.device);
+        // }else{
+        //   Helper.toast("Device is offline", Colors.grey);
+        // }
         },
       child: Row(
         children: [
            Container(
-            padding:        EdgeInsets.all(10.r),
+            padding: EdgeInsets.all(10.r),
             margin: EdgeInsets.only(right: 10.w),
             decoration: BoxDecoration(
-              color: SmartyColors.secondary10,
+              color: widget.device.status=="1"? SmartyColors.secondary10:SmartyColors.grey30,
               borderRadius: BorderRadius.circular(15.r),
               border: Border.all(color:widget.device.alarm=="1"? SmartyColors.error
                   : SmartyColors.secondary10,width: 3)
@@ -51,15 +57,22 @@ class _DeviceCardState extends State<DeviceCard> {
                       //height: 48.w,
                     ),
                     SizedBox(width: 30.w),//32.w
-                    !widget.isFromHome? Switch.adaptive(
-                      activeColor: SmartyColors.primary,
-                      value: widget.device.active,
-                      onChanged: (bool v) {
-                        setState(() {
-                          widget.device.active = v;
-                        });
-                      },
-                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    // !widget.isFromHome? Switch.adaptive(
+                    //   activeColor: SmartyColors.primary,
+                    //   value: widget.device.active,
+                    //   onChanged: (bool v) {
+                    //     setState(() {
+                    //       widget.device.active = v;
+                    //     });
+                    //   },
+                    //   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    // )
+                        //:
+             widget.device.alarm=="1"?
+             Image.asset(
+                      'assets/animation/alert_animation2.gif',
+                      width: 48.w,
+                      //height: 48.w,
                     ):Container(),
                   ],
                 ),
@@ -71,7 +84,9 @@ class _DeviceCardState extends State<DeviceCard> {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  widget.device.active ? "Status : Armed":"Status : Disarmed",
+                  widget.device.power=="0" ? "Disarmed":
+                  widget.device.power=="1" ?"Armed":
+                  "Not responding",
                   style: TextStyles.body.copyWith(color: SmartyColors.grey60),
                 )
               ],

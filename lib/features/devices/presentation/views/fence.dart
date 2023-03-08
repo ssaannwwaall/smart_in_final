@@ -21,6 +21,9 @@ class _FenceState extends State<Fence> {
 
   @override
   Widget build(BuildContext context) {
+    MediaQueryData mediaQuery=MediaQuery.of(context);
+    double _width=mediaQuery.size.width;
+    double _height=mediaQuery.size.height;
     return Scaffold(
       body: SingleChildScrollView(
         child: Padding(
@@ -83,41 +86,36 @@ class _FenceState extends State<Fence> {
                   borderRadius: BorderRadius.circular(24),
                 ),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                 // crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    /*Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                   // SizedBox(height: 10.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Image.asset('assets/icons/netflix.png', width: 28),
-                            SizedBox(width: 8.w),
-                            Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Netflix',
-                                  style: TextStyles.body
-                                      .copyWith(color: SmartyColors.grey),
-                                ),
-                                Text(
-                                  'Deadline 2022/07/20',
-                                  style: TextStyles.subtitle
-                                      .copyWith(color: SmartyColors.grey60),
-                                )
-                              ],
+                        Container(
+                          margin: const EdgeInsets.all(10),
+                          decoration:  BoxDecoration(
+                            shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Provider.of<DeviceProvider>(context, listen: true).getDevices()[widget.device.index].status=="1"?Colors.green:
+                                SmartyColors.error,
+                                blurRadius: 20.0,
+                                spreadRadius: 10.0,
+                              )
+                            ],
+                          ),
+                          child: ClipOval(
+                            child: Container(
+                              width: 15.r,
+                              height: 15.r,
+                              color: Provider.of<DeviceProvider>(context, listen: true).getDevices()[widget.device.index].status=="1"?
+                              Colors.green:
+                              SmartyColors.error,
                             ),
-                          ],
+                          ),
                         ),
                       ],
-                    ),*/
-                    SizedBox(height: 10.h),
-                    Text(
-                      'Fence current status',
-                      style: TextStyles.subtitle,
                     ),
                     Container(
                       decoration: BoxDecoration(
@@ -127,170 +125,52 @@ class _FenceState extends State<Fence> {
                       child: Stack(children: [
                         Center(child: Image.asset('assets/icons/machinetools.png',
                           color: SmartyColors.grey80,width: 200.h,height: 200.w,)),
-                        /*Visibility(
-                          visible: true,
-                          child: Positioned.fill(
-                            child: Align(
-                              alignment: Alignment.center,
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 24.w),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: SmartyColors.black,
-                                ),
-                                child: Text(
-                                  widget.device.active?'Armed':"Disarmed",
-                                  style: TextStyles.headline3
-                                      .copyWith(color: SmartyColors.tertiary),
-                                ),
-                              ),
-                            ),
-                          ),
-                        )*/
                       ]),
                     ),
-                    SizedBox(height: 5.h),
-                   /* Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 19.w),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 24.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Container(
+                          // height: 40.h,
+                          padding: EdgeInsets.all(16.r),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.r),
+                            border:
+                            Border.all(color: SmartyColors.grey30),
+                          ),
+                          child: Text(
+                            Provider.of<DeviceProvider>(context, listen: true).getDevices()[widget.device.index].mute=="0"?'Mute':"Un-mute",
+                            style: TextStyles.headline4
+                                .copyWith(color: SmartyColors.grey),
+                          ),
+                        ),
+                        Container(
+                          // height: 40.h,
+                          padding: EdgeInsets.all(16.r),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20.r),
+                            border:
+                            Border.all(color: SmartyColors.grey30),
+                          ),
+                          child: Row(
                             children: [
-                              Container(
-                                // height: 40.h,
-                                padding: EdgeInsets.all(6.r),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.r),//100
-                                  border:
-                                  Border.all(color: SmartyColors.grey30),
-                                ),
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          widget.device.power="1";
-                                        });
-                                      },
-                                      padding: EdgeInsets.zero,
-                                      //constraints: const BoxConstraints(),
-                                      icon:  Icon(Icons.power,
-                                        color: SmartyColors.primary,
-                                        size: 50.r,
-                                          ),
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          widget.device.power="0";
-                                        });
-                                      },
-                                      padding: EdgeInsets.zero,
-                                      //constraints: const BoxConstraints(),
-                                      icon:  Icon(Icons.power_off,
-                                        color: SmartyColors.grey60,
-                                        size: 50.r,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                // height: 40.h,
-                                padding: EdgeInsets.all(16.r),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(200.r),
-                                  border:
-                                  Border.all(color: SmartyColors.grey30),
-                                ),
-                                child: Row(
-                                  children: [
-                                    //const Icon(Icons.volume_up_rounded),
-                                     SizedBox(width: 5.w),
-                                    Text(
-                                        widget.device.power=="0"?'Disarmed':
-                                        widget.device.power=="1"?"Armed":
-                                        widget.device.power=="1"?"":"Not connected",
-                                      style: TextStyles.headline4
-                                          .copyWith(color: SmartyColors.grey),
-                                    ),
-                                  ],
-                                ),
+                              //const Icon(Icons.volume_up_rounded),
+                              SizedBox(width: 5.w),
+                              Text(
+                                Provider.of<DeviceProvider>(context, listen: true).getDevices()[widget.device.index].power=="0"?'Disarmed':
+                                Provider.of<DeviceProvider>(context, listen: true).getDevices()[widget.device.index].power=="1"?"Armed":
+                                Provider.of<DeviceProvider>(context, listen: true).getDevices()[widget.device.index].power=="2"?"Not responding":"Un-known",
+                                style: TextStyles.headline4
+                                    .copyWith(color: SmartyColors.grey),
                               ),
                             ],
                           ),
-                        ],
-                      ),
+                        ),
+                        //Paste here
+
+                      ],
                     ),
-                    *//*Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 19.w),
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20.h),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                // height: 40.h,
-                                padding: EdgeInsets.all(16.r),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20.r),//100
-                                  border:
-                                  Border.all(color: SmartyColors.grey30),
-                                ),
-                                child: Row(
-                                  children: [
-                                    InkWell(
-                                      onTap: (){
-                                        setState(() {
-                                          widget.device.alarm="1";
-                                        });
-                                      },
-                                      child: Image.asset('assets/icons/unmute.png',
-                                        color: SmartyColors.primary,width: 40.r,height: 40.r,),
-                                    ),
-                                    SizedBox(width: 30.h,),
-                                    InkWell(
-                                      onTap: (){
-                                        setState(() {
-                                          widget.device.alarm="0";
-                                        });
-                                      },
-                                      child: Image.asset('assets/icons/unmute.png',
-                                        color: SmartyColors.primary,width: 40.r,height: 40.r,),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Container(
-                                // height: 40.h,
-                                padding: EdgeInsets.all(16.r),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(200.r),
-                                  border:
-                                  Border.all(color: SmartyColors.grey30),
-                                ),
-                                child: Row(
-                                  children: [
-                                    //const Icon(Icons.volume_up_rounded),
-                                    SizedBox(width: 5.w),
-                                    Text(
-                                      widget.device.power=="0"?'Disarmed':
-                                      widget.device.power=="1"?"Armed":
-                                      widget.device.power=="1"?"":"Not connected",
-                                      style: TextStyles.headline4
-                                          .copyWith(color: SmartyColors.grey),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),*/
+                    SizedBox(height: 5.h),
                   ],
                 ),
               ),
@@ -300,21 +180,11 @@ class _FenceState extends State<Fence> {
                   children: [
                     SizedBox(height: 24.h),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Container(
-                          // height: 40.h,
-                          padding: EdgeInsets.all(16.r),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.r),//100
-                            border:
-                            Border.all(color: SmartyColors.grey30),
-                          ),
-                          child: Row(
-                            children: [
-                              InkWell(
+                        /*InkWell(
                                 onTap: () {
-                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/Power/1",context);
+                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.name}/cmd/Power","1",context);
                                   // setState(() {
                                   //   //publish here
                                   //   widget.device.power="1";
@@ -322,43 +192,61 @@ class _FenceState extends State<Fence> {
                                 },
                                 child: Image.asset('assets/icons/power.png',
                                   color: SmartyColors.primary,width: 40.r,height: 40.r,),
-                              ),
-                              SizedBox(width: 30.h,),
-                              InkWell(
+                              ),*/
+                        SizedBox(
+                          width: _width*0.3,
+                          child: InkWell(
+                            onTap: (){
+                              Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.name}/cmd/Power","1",context);
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(20.r),
+                                decoration: BoxDecoration(
+                                  color: SmartyColors.grey10,
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Image.asset("assets/icons/power.png",height: 50.r,width: 50.r,
+                                      color: SmartyColors.primary,),
+                                    Text("Armed",style: TextStyles.body,)
+                                  ],
+                                )),
+                          ),
+                        ),
+                        SizedBox(width: 30.h,),
+                        /*InkWell(
                                 onTap: (){
-                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/Power/0",context);
+                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.name}/cmd/Power","0",context);
                                   // setState(() {
                                   //   widget.device.power="0";
                                   // });
                                 },
                                 child: Image.asset('assets/icons/power.png',
                                   color: SmartyColors.grey80,width: 40.r,height: 40.r,),
-                              ),
-                            ],
+                              ),*/
+                        SizedBox(
+                          width: _width*0.3,
+                          child: InkWell(
+                            onTap: (){
+                              Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.name}/cmd/Power","0",context);
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(20.r),
+                                decoration: BoxDecoration(
+                                  color: SmartyColors.grey10,
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Image.asset("assets/icons/power.png",height: 50.r,width: 50.r,
+                                      color: SmartyColors.grey80,),
+                                    Text("Disarmed",style: TextStyles.body,)
+                                  ],
+                                )),
                           ),
                         ),
-                        Container(
-                          // height: 40.h,
-                          padding: EdgeInsets.all(16.r),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(200.r),
-                            border:
-                            Border.all(color: SmartyColors.grey30),
-                          ),
-                          child: Row(
-                            children: [
-                              //const Icon(Icons.volume_up_rounded),
-                              SizedBox(width: 5.w),
-                              Text(
-                                Provider.of<DeviceProvider>(context, listen: false).getDevices()[widget.device.index].power=="0"?'Disarmed':
-                                Provider.of<DeviceProvider>(context, listen: false).getDevices()[widget.device.index].power=="1"?"Armed":
-                                Provider.of<DeviceProvider>(context, listen: false).getDevices()[widget.device.index].power=="2"?"Not responding":"Un-known",
-                                style: TextStyles.headline4
-                                    .copyWith(color: SmartyColors.grey),
-                              ),
-                            ],
-                          ),
-                        ),
+
                       ],
                     ),
                   ],
@@ -371,114 +259,65 @@ class _FenceState extends State<Fence> {
                   children: [
                     SizedBox(height: 24.h),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Container(
-                          // height: 40.h,
-                          padding: EdgeInsets.all(16.r),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(20.r),//100
-                            border:
-                            Border.all(color: SmartyColors.grey30),
-                          ),
-                          child: Row(
-                            children: [
-                              InkWell(
-                                onTap: () {
-                                  //publish here
-                                  print('clicked...');
-                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/mute/0",context);
-                                  // setState(() {
-                                  //   widget.device.mute="0";
-                                  // });
-                                },
-                                child: Image.asset('assets/icons/unmute.png',
-                                  color: SmartyColors.primary,width: 40.r,height: 40.r,),
-                              ),
-                              SizedBox(width: 30.h,),
-                              InkWell(
-                                onTap: (){
-                                  Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/mute/1",context);
-                                  // setState(() {
-                                  //   widget.device.mute="1";
-                                  // });
-                                },
-                                child: Image.asset('assets/icons/mute.png',
-                                  color: SmartyColors.grey80,width: 40.r,height: 40.r,),
-                              ),
-                            ],
+                        SizedBox(
+                          width: _width*0.3,
+                          child: InkWell(
+                            onTap: (){
+                              Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.deviceModel}/${widget.device.name}/cmd/Mute","0",context);//TODO ${widget.device.deviceModel}
+                              //publish here
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(20.r),
+                                decoration: BoxDecoration(
+                                  color: SmartyColors.grey10,
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Image.asset("assets/icons/unmute.png",height: 50.r,width: 50.r,
+                                      color: SmartyColors.primary,),
+                                    Text("Un-mute",style: TextStyles.body,)
+                                  ],
+                                )),
                           ),
                         ),
-                        Container(
-                          // height: 40.h,
-                          padding: EdgeInsets.all(16.r),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(200.r),
-                            border:
-                            Border.all(color: SmartyColors.grey30),
-                          ),
-                          child: Row(
-                            children: [
-                              //const Icon(Icons.volume_up_rounded),
-                              SizedBox(width: 5.w),
-                              Text(
-                                Provider.of<DeviceProvider>(context, listen: false).getDevices()[widget.device.index].mute=="0"?'Mute':"Un-mute",
-                                style: TextStyles.headline4
-                                    .copyWith(color: SmartyColors.grey),
-                              ),
-                            ],
+                        SizedBox(width: 30.h,),
+                        SizedBox(
+                          width: _width*0.3,
+                          child: InkWell(
+                            onTap: (){
+                              print('clicked....');
+                              Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.deviceModel}/${widget.device.name}/cmd/Mute","1",context);
+                              //publish here
+                            },
+                            child: Container(
+                                padding: EdgeInsets.all(20.r),
+                                decoration: BoxDecoration(
+                                  color: SmartyColors.grey10,
+                                  borderRadius: BorderRadius.circular(16.0),
+                                ),
+                                child: Column(
+                                  children: [
+                                    Image.asset("assets/icons/mute.png",height: 50.r,width: 50.r,
+                                      color: SmartyColors.primary,),
+                                    Text("Mute 🔔",style: TextStyles.body,)
+                                  ],
+                                )),
                           ),
                         ),
+                        //listing mute/unmute
                       ],
                     ),
                   ],
                 ),
               ),
               SizedBox(height: 30.h),
-              /*Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Container(
-                    height: 48.w,
-                    width: 48.w,
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100.r),
-                      border: Border.all(color: SmartyColors.grey30),
-                    ),
-                    child: Icon(
-                      Icons.close_rounded,
-                      color: SmartyColors.grey60,
-                    ),
-                  ),
-                  Container(
-                    height: 48.w,
-                    width: 48.w,
-                    padding: EdgeInsets.all(8.r),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(100.r),
-                      border: Border.all(color: SmartyColors.grey30),
-                    ),
-                    child: Icon(
-                      Icons.cast_connected_rounded,
-                      color: SmartyColors.grey60,
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 51.h),*/
-              /*ChipButton(
-                child:  Image.asset("assets/icons/sound_test.png",height: 50.r,width: 50.r,color: SmartyColors.grey80,),
-                onPressed: () {
-                  setState(() {
-                    _isOn = !_isOn;
-                  });
-                },
-              ),*/
               Center(
                 child: InkWell(
                   onTap: (){
-                    Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.deviceId}/cmd/Sound/1",context);
+                    Helper.publishTopic("${widget.device.deviceBrand}/${widget.device.model}/${widget.device.name}/cmd/SoundTest","1",context);
                     //publish here
                   },
                   child: Container(
@@ -491,7 +330,7 @@ class _FenceState extends State<Fence> {
                         children: [
                           Image.asset("assets/icons/sound_test.png",height: 50.r,width: 50.r,
                             color: SmartyColors.primary,),
-                          Text("Sound test",style: TextStyles.body,)
+                          Text("Sound test 🔔",style: TextStyles.body,)
                         ],
                       )),
                 ),

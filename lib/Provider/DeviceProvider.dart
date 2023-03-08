@@ -9,6 +9,7 @@ class DeviceProvider extends ChangeNotifier {
     notifyListeners();
   }
   void addAll(List<Device> li) {
+    print("llllllllllllllllllll");
     _myDevices.addAll(li);
     notifyListeners();
   }
@@ -25,7 +26,10 @@ class DeviceProvider extends ChangeNotifier {
 
   void update(int position,Device item) {
     //_myDevices.re(item);
-    _myDevices.insert(position, item);
+    print('updaeting at $position   item is   ${item.index}');
+    //_myDevices.insert(position, item);
+    _myDevices[position]= item ;//(position, item);
+    //_myDevices.
     notifyListeners();
   }
 }

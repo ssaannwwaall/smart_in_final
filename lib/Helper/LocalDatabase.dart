@@ -80,11 +80,14 @@ class LocalDatabase {
 
     List<Device> lis=[];
     Device d;
-    for (var element in prefs.getStringList(key)!) {
-      d=Device.fromJson(jsonDecode(element));
-      d.type=DeviceType.fence;
-      lis.add(d);
+    if(prefs.getStringList(key)!=null){
+      for (var element in prefs.getStringList(key)!) {
+        d=Device.fromJson(jsonDecode(element));
+        d.type=DeviceType.fence;
+        lis.add(d);
+      }
     }
+
     print('list after...${lis.length}');
     return lis;
   }

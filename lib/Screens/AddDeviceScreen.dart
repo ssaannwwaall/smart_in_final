@@ -67,40 +67,13 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
               IconButton(onPressed: (){Navigator.of(context).pop();}, icon: const Icon(Icons.arrow_back_ios,color: Colors.black,)),
-              Text("Add Device",style: TextStyles.body,),
-              IconButton(onPressed: () async {
+              Text(widget.device!=null? "Edit Device":"Add Device",style: TextStyles.body,),
+                widget.device==null?IconButton(onPressed: () async {
                 String result=await AppNavigator.pushNamed(qRScanScreen);
                 _controllerDeviceId.text=result;
-                }, icon: Icon(Icons.qr_code_scanner_sharp,color: SmartyColors.grey80,size: _height*0.04,)),
+                }, icon: Icon(Icons.qr_code_scanner_sharp,color: SmartyColors.grey80,size: _height*0.04,))
+                    :Container(),
             ],),
-
-            /*Container(
-              width: 100,
-              height: 100,
-              child: DropdownButton<String>(
-                value: selectedDevice,
-                icon:const  Icon(Icons.arrow_drop_down),
-                iconSize: 24,
-                elevation: 16,
-                style: const TextStyle(color: Colors.red, fontSize: 18),
-                underline: Container(
-                  height: 2,
-                  color: Colors.deepPurpleAccent,
-                ),
-                onChanged: (String? data) {
-                  setState(() {
-                    selectedDevice = data!;
-                  });
-                },
-                items: listDevicesOnLocalId.map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-              ),
-            ),*/
-
             CustomTextField(_width*0.95, "Enter here", "Device ID", TextInputType.text, _controllerDeviceId),
             CustomTextField(_width*0.95, "Enter here", "Name", TextInputType.text, _controllerName),
             CustomTextField(_width*0.95, "Enter here", "Location", TextInputType.text, _controllerLocation),
@@ -146,9 +119,9 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                 CustomTextField(_width*0.95, "Enter here", "Model", TextInputType.text, _controllerModel),
                 CustomTextField(_width*0.95, "Enter here", "Brand", TextInputType.text, _controllerBrand),
               ],
-            ): CustomButton("Search on local network", _width*0.9, () {
+            ): widget.device==null?CustomButton("Search on local network", _width*0.9, () {
               loadSSDP();
-            },background: Colors.white),
+            },background: Colors.white):Container(),
             SizedBox(height: _height*0.01,),
             SizedBox(width: _width*0.95,child: Text("You wanna add daily schedule?",style: TextStyles.body,)),
             Row(
@@ -210,7 +183,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                           borderRadius: const BorderRadius.all(Radius.circular(10)),
                           border: Border.all(color: SmartyColors.primary)
                         ),
-                        child: Text(onTime!=null?"${onTime!.hour}:${onTime!.minute}":"On Time",textAlign: TextAlign.center,style: TextStyles.headline4,),
+                        child: Text(onTime!=null?"${onTime!.hour}:${onTime!.minute}":"07:00 ",textAlign: TextAlign.center,style: TextStyles.headline4,),
                       ),
                     ],
                   ),
@@ -235,7 +208,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                             borderRadius: const BorderRadius.all(Radius.circular(10)),
                             border: Border.all(color: SmartyColors.primary)
                         ),
-                        child: Text(offTime!=null?"${offTime!.hour}:${offTime!.minute}":"Off Time",textAlign: TextAlign.center,style: TextStyles.headline4,),
+                        child: Text(offTime!=null?"${offTime!.hour}:${offTime!.minute}":"10:00",textAlign: TextAlign.center,style: TextStyles.headline4,),
                       ),
                     ],
                   ),
@@ -254,11 +227,13 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                     mute: "0", alarm: "0", power: "0", deviceBrand: _controllerBrand.text.toString(),
                     deviceId: _controllerDeviceId.text.toString(), deviceIP: _controllerIP.text.toString(),
                     deviceModel: _controllerModel.text.toString(), model: _controllerModel.text.toString(),
-                    index: widget.device!.index,
+                    index: widget.device!.index,status: "0"
                 ),
                 );
                 LocalDatabase.saveStringList(LocalDatabase.MY_DEVICES_LIST,
                     Provider.of<DeviceProvider>(context,listen: false).getDevices().map((deviceObj) => jsonEncode( deviceObj.toJson() )).toList() );
+                Helper.toast("${_controllerName.text.toString()} saved successfully", Colors.green);
+                Navigator.of(context).pop();
 
               }else{
                 Provider.of<DeviceProvider>(context, listen: false).add(
@@ -269,10 +244,13 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                         mute: "0", alarm: "0", power: "0", deviceBrand: _controllerBrand.text.toString(),
                         deviceId: _controllerDeviceId.text.toString(), deviceIP: _controllerIP.text.toString(),
                         deviceModel: _controllerModel.text.toString(), model: _controllerModel.text.toString(),
-                        index: Provider.of<DeviceProvider>(context, listen: false).getDevices().length
+                        index: Provider.of<DeviceProvider>(context, listen: false).getDevices().length,status: "0"
                     ));
                 LocalDatabase.saveStringList(LocalDatabase.MY_DEVICES_LIST,
-                    Provider.of<DeviceProvider>(context,listen: false).getDevices().map((deviceObj) => jsonEncode( deviceObj.toJson() )).toList() );
+                    Provider.of<DeviceProvider>(context,listen: false).getDevices().map((deviceObj)
+                    => jsonEncode( deviceObj.toJson() )).toList() );
+                Helper.toast("${_controllerName.text.toString()} saved successfully", Colors.green);
+                Navigator.of(context).pop();
 
               }
 
@@ -296,7 +274,8 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
       setState(() {});
     }
   }
-  loadSSDP()async {
+  loadSSDP() async {
+    listOnLocalNetwork.clear();
     Helper.showLoading(context);
     final disc = ssdp.DeviceDiscoverer();
     await disc.start(ipv6: false);
@@ -321,15 +300,15 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
               alreadySaved=true;
             }
           });
-          if(!alreadySaved) {
+          if(alreadySaved==false) {
             //String url="http://192.168.0.102:80/description.xml";
             String s1=dev.urlBase.toString().split("//")[1];
             String ip=s1.split("/des").first;
             print("IP is $ip");
             listOnLocalNetwork.add(Device(active: false, room: "", mute: "0",
             alarm: "0", power: "0", deviceBrand: dev.manufacturer!,
-            deviceId: dev.serviceNames.toString(), deviceIP: ip,
-            deviceModel: dev.modelName.toString(), model: "", index: 0));
+            deviceId: dev.uuid.toString(), deviceIP: ip,
+            deviceModel: dev.modelName.toString(), model: "", index: 0,name: dev.friendlyName,status: "0"));
           }
         }
         setState(() {});
@@ -344,29 +323,21 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
       if(listOnLocalNetwork.isEmpty){
         Helper.toast("Device not found", SmartyColors.error);
       }else{
-        totalDevices(context,"${listOnLocalNetwork.length} device(s) found, do you want to save device?",(){
-          //save..
-          // saveDevice(Device(
-          //     name: listOnLocalNetwork.first.name,
-          //     type: DeviceType.fence,
-          //     active: false, room: _controllerLocation.text.toString(),
-          //     mute: "0", alarm: "0", power: "0", deviceBrand: _controllerBrand.text.toString(),
-          //     deviceId: _controllerDeviceId.text.toString(), deviceIP: _controllerIP.text.toString(),
-          //     deviceModel: _controllerModel.text.toString(), model: _controllerModel.text.toString(),
-          //     index: Provider.of<DeviceProvider>(context, listen: false).getDevices().length
-          // ));
+        totalDevices(context,"${listOnLocalNetwork.length} device(s) ${listOnLocalNetwork.first.name} found, do you want to save device?",(){
           _controllerDeviceId.text=listOnLocalNetwork.first.deviceId;
           _controllerName.text=listOnLocalNetwork.first.name??"";
           _controllerLocation.text="";
           _controllerIP.text=listOnLocalNetwork.first.deviceIP;
-          _controllerModel.text=listOnLocalNetwork.first.model;
+          _controllerModel.text=listOnLocalNetwork.first.deviceModel;
           _controllerBrand.text=listOnLocalNetwork.first.deviceBrand;
           setState((){});
+          Navigator.of(context).pop();
         });
       }
     });
   }
   static void totalDevices(BuildContext context, String msg, Function()? functionHandler) {
+
     Dialog rejectDialogWithReason = Dialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
         child: Container(
@@ -390,7 +361,7 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
                   TextButton(
                       onPressed: functionHandler,
                       child: const Text(
-                        'Save one',
+                        'Save',
                         style: TextStyle(
                             fontWeight: FontWeight.w100,
                             fontSize: 16,
@@ -415,12 +386,5 @@ class _AddDeviceScreenState extends State<AddDeviceScreen> {
         builder: (BuildContext context) => rejectDialogWithReason);
   }
 
-  saveDevice(Device device1) {
-    Provider.of<DeviceProvider>(context, listen: false).add(device1);
-    LocalDatabase.saveStringList(LocalDatabase.MY_DEVICES_LIST,
-        Provider.of<DeviceProvider>(context,listen: false).getDevices().map((deviceObj) => jsonEncode( deviceObj.toJson() )).toList() );
-    Helper.toast("${device1.name} saved successfully", SmartyColors.success);
-    Navigator.of(context).pop();
-  }
 
 }

@@ -299,11 +299,14 @@ class Helper {
     return selectedTime;
   }
 
-  static Future<void> publishTopic(String topic,BuildContext context) async {
+  static Future<void> publishTopic(String topic,String value,BuildContext context) async {
     if(await isInternetAvailble()){
+      print("aaaaaaaaaaaa");
       if (client.connectionStatus!.state == MqttConnectionState.connected) {
-         MqttClientPayloadBuilder().addString(topic);
-         client.publishMessage(topic, MqttQos.exactlyOnce, MqttClientPayloadBuilder().addString(topic).payload!);
+        print("bbbbbbbb");
+         //MqttClientPayloadBuilder().addString(topic);
+         client.publishMessage(topic, MqttQos.atLeastOnce, MqttClientPayloadBuilder().addString(value).payload!);
+         //client.publishMessage(topic, MqttQos.atLeastOnce, MqttPayload('1').  );
 
       } else {
         Helper.msgDialog(context, "Please wait server is trying to connect your device, and try again later.", () {

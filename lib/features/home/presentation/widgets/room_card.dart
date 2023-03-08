@@ -35,7 +35,7 @@ class RoomCard extends StatelessWidget {
           Text(
             //'Living Room',
             location??"",
-            style: TextStyles.body.copyWith(color: SmartyColors.tertiary),
+            style: TextStyles.body.copyWith(color: SmartyColors.black),
           ),
           const SizedBox(height: 4),
           /*Text(

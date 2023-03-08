@@ -26,7 +26,7 @@ String serverUserName='';
 String serverPassword='';
 String serverToken='';
 
-final client = MqttServerClient(serverDomain, 'my_app');
+final client = MqttServerClient(serverDomain, '1883',);
 class _DashboardState extends State<Dashboard>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
@@ -42,14 +42,14 @@ class _DashboardState extends State<Dashboard>
     //StatsHomeScreen(),
   ];
 
-
+  List<Device> list_for_updates=[];
 
   @override
   void initState() {
     _tabController = TabController(length: _children.length, vsync: this);
     _tabController.index = widget.initialTab;
-    loadAllData();
     super.initState();
+    loadAllData();
   }
 
   void onTabTapped(int index) {
@@ -112,7 +112,6 @@ class _DashboardState extends State<Dashboard>
 
 
   void mqttServerConnectivity()async{//test.mosquitto.org
-
     /// Set the correct MQTT protocol for mosquito
     print("domain $serverDomain");
     client.setProtocolV311();
@@ -150,32 +149,60 @@ class _DashboardState extends State<Dashboard>
     }
 
 
-    client.updates!.listen((messageList) {
+    client.updates!.listen((dynamic messageList) {
       print(" listening.... ${messageList.length}");
-      if(messageList.length>0){
+      if(messageList.length>0) {
         print("my message is ${messageList[0].payload}");
       }
+      final MqttPublishMessage recMess = messageList[0].payload;
+      final message = MqttPublishPayload.bytesToStringAsString(recMess.payload.message);
 
-      final recMess = messageList[0];
-      // if (recMess is! MqttReceivedMessage<MqttPublishMessage>) return;
-      // final pubMess = recMess.payload;
-      // final pt = MqttPublishPayload.bytesToStringAsString(pubMess.payload.message);
-      print('EXAMPLE::Change notification:: topic is <${recMess.topic}>, payload is <--  -->');
-      String devName=recMess.topic.split("ert/")[1].split("/sta").first;
-      Provider.of<DeviceProvider>(context, listen: true).getDevices().forEach((element) {
-        if(element.name==devName) {
-          //if(messageList[0].payload.toString()[1]=="1"){
-            if(recMess.topic.split("stat/")[1]=="Alarm"){
-              element.alarm=messageList[0].payload.toString()[1];
-            }else if(recMess.topic.split("stat/")[1]=="Mute"){
-              element.mute=messageList[0].payload.toString()[1];
-            }else if(recMess.topic.split("stat/")[1]=="Power"){
-              element.power=messageList[0].payload.toString()[1];
+      print('message id : $message    ${recMess.variableHeader?.topicName}');
+
+      print('EXAMPLE::Change notification:: topic is <${recMess.variableHeader?.topicName}>, payload is <--${messageList[0].payload.toString()}  -->');
+
+      if(recMess.variableHeader?.topicName!=null) {
+        String? devName = recMess.variableHeader?.topicName.split("/")[2];
+        print('updating length ${list_for_updates.length}');
+        for(int a=0;a<list_for_updates.length;a++) {
+          if (list_for_updates[a].name == devName) {
+           // print('updating device $devName');
+            //if(messagelist_for_updates[0].payload.toString()[1]=="1"){
+            if (recMess.variableHeader?.topicName.split("/").last == "Alarm") {
+              list_for_updates[a].alarm = message.toString();
+            } else if (recMess.variableHeader?.topicName.split("/").last == "Mute") {
+              list_for_updates[a].mute = message.toString();
+            } else if (recMess.variableHeader?.topicName.split("/").last == "Power") {
+              list_for_updates[a].power = message.toString();
             }
-            Provider.of<DeviceProvider>(context, listen: false).update(element.index, element);
-          //}
+            //print('length is...${list_for_updates[a].index}');
+            Provider.of<DeviceProvider>(context, listen: false).update(list_for_updates[a].index, list_for_updates[a]);
+            //}
+          }
         }
-      });
+        // Provider.of<DeviceProvider>(context, listen: false)
+        //     .getDevices()
+        //     .forEach((element) {
+        //       print('running...');
+        //   // if (element.name == devName) {
+        //   //   //if(messageList[0].payload.toString()[1]=="1"){
+        //   //   if (recMess.variableHeader?.topicName.split("/").last == "Alarm") {
+        //   //     element.alarm = message.toString();
+        //   //   } else if (recMess.variableHeader?.topicName.split("/").last == "Mute") {
+        //   //     element.mute = message.toString();
+        //   //   } else if (recMess.variableHeader?.topicName.split("/").last == "Power") {
+        //   //     element.power = message.toString();
+        //   //   }
+        //   //   Provider.of<DeviceProvider>(context, listen: false).update(
+        //   //       element.index, element);
+        //   //   //}
+        //   // }
+        // });
+      }else{
+        print("payload is null");
+      }
+
+
       print('');
     });
 
@@ -217,13 +244,14 @@ class _DashboardState extends State<Dashboard>
     print('EXAMPLE:: <<<< y real topic 1 >>>>');
     const statusTopic1 = 'CeeTech/E_Fence_Alert/E-Fence-2/stat/#'; // Not a wildcard topic
     String powerTopic;
+    //String onlineTopic;
     Provider.of<DeviceProvider>(context, listen: false).getDevices().forEach((element) {
+      //onlineTopic="${element.deviceBrand}/${element.deviceModel}/${element.name}/stat/Status";
        powerTopic="${element.deviceBrand}/${element.deviceModel}/${element.name}/stat/#";
        client.subscribe(powerTopic, MqttQos.exactlyOnce); //All topics subscribed for all devices
     });
     client.subscribe(statusTopic1, MqttQos.exactlyOnce);
     print('EXAMPLE:: <<<< my real topic 2 >>>>');
-
   }
 
   /// The unsolicited disconnect callback
@@ -242,12 +270,15 @@ class _DashboardState extends State<Dashboard>
 
 
 
-
   Future<void> loadDevices() async {
-    List<Device> strList = await LocalDatabase.getStringList(LocalDatabase.MY_DEVICES_LIST);
-    print("my devices...${strList.length}");
-    Provider.of<DeviceProvider>(context, listen: false).addAll(strList);
-    setState(() {});
+    print("app home before loading  ${Provider.of<DeviceProvider>(context, listen: false).getDevices().length}");
+    list_for_updates = await LocalDatabase.getStringList(LocalDatabase.MY_DEVICES_LIST);
+     print("my devices...${list_for_updates.length}");
+     print("app home before loading  ${Provider.of<DeviceProvider>(context, listen: false).getDevices().length}");
+     Provider.of<DeviceProvider>(context, listen: false).addAll(list_for_updates);
+     print("app home after loading  ${Provider.of<DeviceProvider>(context, listen: false).getDevices().length}");
+
+    //setState(() {});
   }
 
   void loadAllData() async {

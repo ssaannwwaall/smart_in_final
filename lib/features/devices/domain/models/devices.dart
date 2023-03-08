@@ -12,6 +12,7 @@ class Device {
   String room;
   String mute;
   String power;
+  String status="1";// tag change here remove value
   String alarm;
  int index;
 
@@ -28,7 +29,8 @@ class Device {
       required this.deviceIP,
       required this.deviceModel,
       required this.model,
-        required this.index
+        required this.index,
+        required this.status,
       });
   factory Device.fromJson(Map<String, dynamic> json) {
     return Device(
@@ -45,6 +47,7 @@ class Device {
       deviceModel: json['deviceModel'].toString(),
       model: json['model'].toString(),
       index: json['index'],
+      status: json['status'],
     );
   }
 
@@ -64,6 +67,7 @@ class Device {
     data['deviceModel'] = deviceModel;
     data['model'] = model;
     data['index'] = index;
+    data['status'] = status;
     return data;
   }
 
@@ -83,7 +87,8 @@ List<Device> devices = [
     deviceModel: "0",
     deviceIP: "0",
     deviceId:  "0",
-    index: 0
+    index: 0,
+    status: "0"
   ),
   Device(
     name: 'Smart TV',
@@ -98,6 +103,7 @@ List<Device> devices = [
       deviceModel: "0",
       deviceIP: "0",
       deviceId:  "0",
+      status: "0",
     index: 1
   ),
   Device(
@@ -112,6 +118,7 @@ List<Device> devices = [
     model: "0",
     deviceModel: "0",
     deviceIP: "0",
+      status: "0",
     deviceId:  "0",
     index: 2
   ),
@@ -146,6 +153,7 @@ List<Device> devices = [
     deviceModel: "0",
     deviceIP: "0",
     deviceId:  "0",
+      status: "0",
     index: 3
   ),
 ];

@@ -187,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-
+    //print("kkkkkkkkkkk  ${Provider.of<DeviceProvider>(context, listen: false).getDevices().length}");
     MediaQueryData mediaQuery=MediaQuery.of(context);
     double _width=mediaQuery.size.width;
     double _height=mediaQuery.size.height;
@@ -213,18 +213,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       decoration: const BoxDecoration(
                         shape: BoxShape.circle,
                         boxShadow: [
-                          BoxShadow(
-                            color: Colors.green,
-                            blurRadius: 20.0,
-                            spreadRadius: 10.0,
-                          )
+                          // BoxShadow(
+                          //   color: Colors.green,
+                          //   blurRadius: 20.0,
+                          //   spreadRadius: 10.0,
+                          // )
                         ],
                       ),
                       child: ClipOval(
                         child: Container(
                           width: 15.r,
                           height: 15.r,
-                            color: Provider.of<IsServerConnectedProvider>(context).getServerStatus()? SmartyColors.success:
+                            color: Provider.of<IsServerConnectedProvider>(context).getServerStatus()?
+                            Colors.green:
                                 SmartyColors.error,
                         ),
                       ),
